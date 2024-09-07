@@ -32,7 +32,7 @@ class JogadorController extends Controller
     }
 
     //Alterar registro
-    //Crud ->
+    //Crud -> insere dados
     public function store(Request $request){
         $regJogador=$request->All();
 
@@ -60,37 +60,48 @@ class JogadorController extends Controller
     //Crud -> update(alterar)
     public function update(Request $request, string $id)
     {
-        $regJogador = $request->All();
+    
+    $regJogador = $request->all();
 
-        $regVerifq = Validator::make($regJogador,[
-            'nome' => 'required',
-            'idade' => 'required',
-            'altura' => 'required'
-        ]);
-        if($regVerifq->fails()){
-            return 'registros não atualizados: '.Response()->json([],Response::HTTP_NO_CONTENT);
-        }
+    $regVerifq = Validator::make($regJogador, [
+        'nome' => 'required|string',
+        'idade' => 'required|integer',
+        'altura' => 'required|numeric'
+    ]);
 
-        $regJogadorBanco = Jogador::find($id);
-        $regJogadorBanco->nome = $regJogador['nome'];
-        $regJogadorBanco->idade = $regJogador['idade'];
-        $regJogadorBanco->altura = $regJogador['altura'];
-
-        $retorno = $regJogadorBanco->save();
-
-        if($retorno) {
-            return "Jogador atualizado com sucesso.".Response()->json([],Response::HTTP_NO_CONTENT);
-
-        } else {
-            return "atenção... Erro: Jogador não atualizado".Response()->json([],Response::HTTP_NO_CONTENT);
-        }
-
+    if ($regVerifq->fails()) {
+        return response()->json([
+            'errors' => $regVerifq->errors()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    $regJogadorBanco = Jogador::find($id);
+
+    if (!$regJogadorBanco) {
+        return response()->json([
+            'message' => 'Jogador não encontrado'
+        ], Response::HTTP_NOT_FOUND);
+    }
+
+    $regJogadorBanco->nome = $regJogador['nome'];
+    $regJogadorBanco->idade = $regJogador['idade'];
+    $regJogadorBanco->altura = $regJogador['altura'];
+
+    if ($regJogadorBanco->save()) {
+        return response()->json([
+            'message' => 'Jogador atualizado com sucesso'
+        ], Response::HTTP_OK);
+    } else {
+        return response()->json([
+            'message' => 'Erro: Jogador não atualizado'
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
 
     //Deletar os registros
     //Crud -> delete(apagar)
     public function destroy (string $id){
-        $regJogador = tbllivros::find($id);
+        $regJogador = Jogador::find($id);
 
         if($regJogador->delete()) {
 
