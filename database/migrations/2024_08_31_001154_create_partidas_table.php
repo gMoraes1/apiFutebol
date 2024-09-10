@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('partidas', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('idJogador');
             $table->timestamps();
             $table->string('localPart');
             $table->string('resultPart');
         });
-    }
 
+        Schema::table('partidas', function (Blueprint $table) {
+            $table->foreign('idJogador')->references('id')->on('users')->onDelete('cascade');    
+        });
+    }
+ 
     /**
      * Reverse the migrations.
      */

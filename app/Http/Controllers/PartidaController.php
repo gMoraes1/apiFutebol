@@ -71,8 +71,8 @@ class PartidaController extends Controller
         }
 
         $regPartidaBanco = Partida::find($id);
-        $regPartidaBanco->nome = $regJogador['localPart'];
-        $regPartidaBanco->idade = $regJogador['resultPart'];
+        $regPartidaBanco->localPart = $regPartida['localPart'];
+        $regPartidaBanco->resultPart = $regPartida['resultPart'];
 
         $retorno = $regPartidaBanco->save();
 
@@ -92,9 +92,9 @@ class PartidaController extends Controller
 
         if($regPartida->delete()) {
 
-            return "o jogador foi deletado com sucesso".Response()->json([],Response::HTTP_NO_CONTENT);
+            return "A partida foi deletada com sucesso".Response()->json([],Response::HTTP_NO_CONTENT);
         }
 
-        return "algo deu errado, o jogador não foi deletado".Response()->json([],Response::HTTP_NO_CONTENT);
+        return "algo deu errado, a partida não foi deletado".Response()->json([],Response::HTTP_NO_CONTENT);
     }
 }
